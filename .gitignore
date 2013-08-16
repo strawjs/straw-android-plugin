@@ -1,2 +1,5 @@
 # gradle build dir
 build
+
+# gradle cache dir
+.gradle
