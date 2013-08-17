@@ -8,3 +8,6 @@ build
 .project
 .classpath
 .settings
+
+# eclipse target dir
+bin
