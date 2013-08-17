@@ -3,3 +3,8 @@ build
 
 # gradle cache dir
 .gradle
+
+# eclipse files
+.project
+.classpath
+.settings
