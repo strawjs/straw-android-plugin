@@ -9,7 +9,7 @@ public class UIPlugin extends org.kt3k.straw.StrawPlugin {
 
 	@Override
 	public String getName() {
-		return "UI";
+		return "ui";
 	}
 
 	static class ToastParam {
