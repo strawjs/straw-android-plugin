@@ -11,7 +11,7 @@ public class SharedPreferencePluginTest {
 
 	@Test
 	public void testGetName() {
-		assertEquals("sharedPreference", new SharedPreferencePlugin().getName());
+		assertEquals("sharedPreferences", new SharedPreferencesPlugin().getName());
 	}
 
 }
