@@ -36,7 +36,7 @@ public class HttpPluginTest {
 	@Test
 	public void testGet() {
 		HttpParam httpParam = new HttpParam();
-		httpParam.url = "http://localhost/";
+		httpParam.url = "http://github.com/";
 
 		HttpPlugin plugin = new HttpPlugin();
 		StrawDrink drink = mock(StrawDrink.class);
