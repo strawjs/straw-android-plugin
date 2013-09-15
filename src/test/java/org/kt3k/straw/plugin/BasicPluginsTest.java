@@ -2,9 +2,15 @@ package org.kt3k.straw.plugin;
 
 import org.junit.runner.RunWith;
 import org.junit.Test;
+import org.kt3k.straw.Straw;
+
 import static org.junit.Assert.*;
 
+import static org.mockito.Mockito.*;
+
 import org.robolectric.RobolectricTestRunner;
+
+import android.webkit.WebView;
 
 @RunWith(RobolectricTestRunner.class)
 public class BasicPluginsTest {
@@ -19,6 +25,12 @@ public class BasicPluginsTest {
 			"org.kt3k.straw.plugin.SharedPreferencesPlugin",
 			"org.kt3k.straw.plugin.UIPlugin",
 		}, BasicPlugins.names);
+	}
+
+	@Test
+	public void testBasicPluginLoading() {
+		Straw straw = Straw.insertInto(mock(WebView.class));
+		straw.addPlugins(BasicPlugins.names);
 	}
 
 	@Test
