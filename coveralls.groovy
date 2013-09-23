@@ -112,7 +112,7 @@ class ServiceInfoFactory {
 void postToCoveralls(String json) {
     def http = new HTTPBuilder(API_HOST)
 
-    http.post(path: API_PATH, body: [json_file: json], requestContentType: URLENC) { resp ->
+    http.post(path: API_PATH, body: [json_file: json]) { resp ->
         println resp.getClass()
     }
 }
@@ -126,6 +126,9 @@ void main() {
         return
     }
 
+    println 'service name: ' + serviceInfo.serviceName
+    println 'service job id: ' + serviceInfo.serviceJobId
+
     File file = new File(COBERTURA_REPORT_PATH)
 
     if (!file.exists()) {
@@ -134,11 +137,15 @@ void main() {
         return
     }
 
+    println 'cobertura report file: ' + file.absolutePath
+
     List<SourceReport> sourceReports = SourceReportFactory.createFromCoberturaXML file
 
     Report rep = new Report(serviceInfo.serviceName, serviceInfo.serviceJobId, sourceReports)
 
-    postToCoveralls(rep.toJson())
+    println rep.toJson()
+
+    postToCoveralls rep.toJson()
 }
 
 main()
