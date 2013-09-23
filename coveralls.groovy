@@ -65,7 +65,7 @@ class SourceReportFactory {
             Map cov = a.get(it.'@filename', [:])
 
             it.lines.line.each() {
-                cov[it.'@number'.toInteger()] = it.'@hits'.toInteger()
+                cov[it.'@number'.toInteger() - 1] = it.'@hits'.toInteger()
             }
         }
 
