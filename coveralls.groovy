@@ -7,6 +7,8 @@ import groovy.json.*
 
 import groovyx.net.http.HTTPBuilder
 import static groovyx.net.http.ContentType.URLENC
+import static groovyx.net.http.ContentType.TEXT
+import static groovyx.net.http.Method.POST
 
 API_HOST = 'https://coveralls.io'
 API_PATH = '/api/v1/jobs'
@@ -43,8 +45,7 @@ class Report {
     }
 
     public String toJson() {
-        JsonBuilder json = new JsonBuilder()
-        json this
+        JsonBuilder json = new JsonBuilder(this)
         return json.toString()
     }
 }
@@ -68,14 +69,14 @@ class SourceReportFactory {
         List<SourceReport> reports = new ArrayList<SourceReport>()
 
         a.each { String filename, Map cov ->
-            def max = cov.max { it.key }
+            String source = new File(sourceDir + filename).text
 
-            List r = [null] * max.key
+            List r = [null] * source.readLines().size()
             cov.each { Integer line, Integer hits ->
                 r[line] = hits
             }
 
-            reports.add new SourceReport(filename, new File(sourceDir + filename).text, r)
+            reports.add new SourceReport(filename, source, r)
         }
 
         return reports
@@ -112,8 +113,20 @@ class ServiceInfoFactory {
 void postToCoveralls(String json) {
     def http = new HTTPBuilder(API_HOST)
 
-    http.post(path: API_PATH, body: [json_file: json]) { resp ->
-        println resp.getClass()
+    http.request(POST) {
+        uri.path = API_PATH
+        requestContentType = URLENC
+        body = [json_file: json]
+
+        response.success = { resp ->
+            println resp.statusLine
+        }
+
+        response.failure = { resp ->
+            println resp.statusLine
+            println resp.getAllHeaders()
+            println resp.getData()
+        }
     }
 }
 
