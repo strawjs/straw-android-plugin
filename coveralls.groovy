@@ -6,12 +6,35 @@ import groovy.json.*
 @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.5.0-RC2')
 
 import groovyx.net.http.HTTPBuilder
+
 import static groovyx.net.http.ContentType.URLENC
+import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.ContentType.TEXT
 import static groovyx.net.http.Method.POST
 
+@Grab(group='org.apache.httpcomponents', module='httpmime', version='4.3') 
+
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import org.apache.http.entity.mime.HttpMultipartMode
+import org.apache.http.entity.mime.content.StringBody
+import org.apache.http.entity.mime.content.FileBody
+
+@Grab(group='org.apache.httpcomponents', module='httpcore', version='4.3') 
+
+import org.apache.http.HttpEntity
+import org.apache.http.HttpResponse
+import org.apache.http.entity.ContentType
+
+@Grab(group='org.apache.httpcomponents', module='httpclient', version='4.3') 
+
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.client.HttpClient
+import org.apache.http.client.methods.HttpPost
+
 API_HOST = 'https://coveralls.io'
 API_PATH = '/api/v1/jobs'
+//API_HOST = 'http://localhost'
+//API_PATH = '/test.php'
 
 COBERTURA_REPORT_PATH = 'build/reports/cobertura/coverage.xml'
 
@@ -111,15 +134,42 @@ class ServiceInfoFactory {
 }
 
 void postToCoveralls(String json) {
-    def http = new HTTPBuilder(API_HOST)
 
-    http.request(POST) {
+    //*
+    new File('send.txt').text = json
+
+    HttpClient c = new DefaultHttpClient()
+    HttpPost p = new HttpPost(API_HOST + API_PATH)
+
+    MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+    builder.addPart('json_file', new FileBody(new File('send.txt'), ContentType.APPLICATION_JSON, 'json_file'))
+    //builder.setMode(HttpMultipartMode.RFC6532)
+    //builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+    //builder.setMode(HttpMultipartMode.STRICT)
+    p.setEntity(builder.build())
+
+    HttpResponse resp = c.execute(p)
+    HttpEntity e = resp.getEntity()
+
+    System.out << e.getContent()
+    //*/
+
+    /*
+    HTTPBuilder http = new HTTPBuilder(API_HOST)
+
+    http.request(POST, TEXT) { req ->
         uri.path = API_PATH
-        requestContentType = URLENC
-        body = [json_file: json]
+        requestContentType = 'multipart/form-data'
 
-        response.success = { resp ->
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+        builder.addPart('json_file', new StringBody(json, ContentType.APPLICATION_JSON))
+        req.entity = builder.build()
+
+        response.success = { resp, reader ->
             println resp.statusLine
+            println resp.getAllHeaders()
+            println resp.getData()
+            System.out << reader
         }
 
         response.failure = { resp ->
@@ -128,6 +178,7 @@ void postToCoveralls(String json) {
             println resp.getData()
         }
     }
+    //*/
 }
 
 void main() {
