@@ -4,20 +4,12 @@
 import groovy.json.*
 
 @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.5.0-RC2')
-
 import groovyx.net.http.HTTPBuilder
 
-import static groovyx.net.http.ContentType.TEXT
 import static groovyx.net.http.Method.POST
 
 @Grab(group='org.apache.httpcomponents', module='httpmime', version='4.3') 
-
 import org.apache.http.entity.mime.MultipartEntityBuilder
-import org.apache.http.entity.mime.content.FileBody
-import org.apache.http.entity.mime.content.InputStreamBody
-
-@Grab(group='org.apache.httpcomponents', module='httpcore', version='4.3') 
-
 import org.apache.http.entity.ContentType
 
 API_HOST = 'https://coveralls.io'
@@ -123,12 +115,11 @@ class ServiceInfoFactory {
 
 void postToCoveralls(String json) {
 
-    HTTPBuilder http = new HTTPBuilder(API_HOST)
+    HTTPBuilder http = new HTTPBuilder(API_HOST + API_PATH)
 
-    http.request(POST, TEXT) { req ->
-        uri.path = API_PATH
+    http.request(POST) { req ->
 
-        req.entity = MultipartEntityBuilder.create().addPart('json_file', new InputStreamBody(new ByteArrayInputStream(json.getBytes('UTF-8')), ContentType.APPLICATION_JSON, 'json_file')).build()
+        req.entity = MultipartEntityBuilder.create().addBinaryBody('json_file', json.getBytes('UTF-8'), ContentType.APPLICATION_JSON, 'json_file').build()
 
         response.success = { resp, reader ->
             println resp.statusLine
