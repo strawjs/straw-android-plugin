@@ -1,5 +1,5 @@
 #! /usr/bin/env groovy
-// coveralls.groovy
+// coveralls.groovy /
 
 import groovy.json.*
 
