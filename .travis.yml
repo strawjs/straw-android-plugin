@@ -7,4 +7,4 @@ jdk:
 
 after_success:
 - gradle cobertura
-- ./coveralls.groovy
+- gradle coveralls
