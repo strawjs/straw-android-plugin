@@ -21,6 +21,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
     testCompile group: 'org.robolectric', name: 'robolectric', version: '2.1.1'
+
+    testCompile 'com.google.mockwebserver:mockwebserver:20130706'
 }
 
 buildscript {
@@ -34,7 +36,7 @@ buildscript {
 
     dependencies {
         classpath 'net.saliman:gradle-cobertura-plugin:1.1.2'
-        classpath 'org.kt3k:coveralls-gradle-plugin:0.1.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:0.1.0'
     }
 }
 
