@@ -3,6 +3,7 @@ package org.kt3k.straw.plugin;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -23,6 +24,7 @@ public class HttpPlugin extends StrawPlugin {
 	static final String CANNOT_CONNECT_ERROR = "1";
 	static final String CANNOT_READ_ERROR = "2";
 	static final String SSL_UNAVAILABLE = "3";
+	static final String TIMEOUT = "4";
 
 	@Override
 	public String getName() {
@@ -52,6 +54,10 @@ public class HttpPlugin extends StrawPlugin {
 			drink.fail(URL_MALFORMED_ERROR, "URL format is wrong: " + param.url);
 
 			return;
+		} catch (SocketTimeoutException e) {
+			drink.fail(TIMEOUT, "connection timed out: " + param.url);
+
+			return;
 		} catch (IOException e) {
 			drink.fail(CANNOT_CONNECT_ERROR, "cannot connect to url: " + param.url);
 
@@ -77,6 +83,10 @@ public class HttpPlugin extends StrawPlugin {
 
 		try {
 			content = inputStreamToString(conn.getInputStream());
+		} catch (SocketTimeoutException e) {
+			drink.fail(TIMEOUT, "connection timed out: " + param.url);
+
+			return;
 		} catch (IOException e) {
 			drink.fail(CANNOT_READ_ERROR, "input stream cannot open: " + param.url);
 
