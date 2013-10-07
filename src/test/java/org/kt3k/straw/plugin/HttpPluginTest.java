@@ -2,19 +2,21 @@ package org.kt3k.straw.plugin;
 
 import static org.kt3k.straw.plugin.HttpPlugin.*;
 
-import org.junit.runner.RunWith;
-
 import org.junit.Test;
+import org.junit.Rule;
 import org.kt3k.straw.StrawDrink;
 
 import static org.junit.Assert.*;
 
 import static org.mockito.Mockito.*;
 
-import org.robolectric.RobolectricTestRunner;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import com.github.tomakehurst.wiremock.junit.*;
 
-@RunWith(RobolectricTestRunner.class)
 public class HttpPluginTest {
+
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(8089);
 
 	@Test
 	public void testGetName() {
@@ -35,8 +37,14 @@ public class HttpPluginTest {
 
 	@Test
 	public void testGet() {
+		stubFor(get(urlEqualTo("/http/stub"))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/plain")
+						.withBody("This is response text.")));
+
 		HttpParam httpParam = new HttpParam();
-		httpParam.url = "http://github.com/";
+		httpParam.url = "http://localhost:8089/http/stub";
 
 		HttpPlugin plugin = new HttpPlugin();
 		StrawDrink drink = mock(StrawDrink.class);
