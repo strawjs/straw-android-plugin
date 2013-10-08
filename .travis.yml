@@ -9,6 +9,7 @@ env:
 - TERM=dumb
 
 after_success:
+- cat build/test-results/*
 - gradle cobertura
 - cat build/reports/cobertura/coverage.xml
 - gradle --info coveralls
