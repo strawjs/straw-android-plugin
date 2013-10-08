@@ -18,8 +18,8 @@ import com.github.tomakehurst.wiremock.junit.*;
 
 public class HttpPluginTest {
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8089);
+	//@Rule
+	//public WireMockRule wireMockRule = new WireMockRule(8089);
 
 	@Test
 	public void testGetName() {
@@ -38,6 +38,7 @@ public class HttpPluginTest {
 		assertEquals(httpResult.content, "abc");
 	}
 
+	/*
 	@Test
 	public void testGet() {
 		stubFor(get(urlEqualTo("/http/stub"))
@@ -55,5 +56,6 @@ public class HttpPluginTest {
 
 		verify(drink).success(isA(HttpResult.class));
 	}
+	*/
 
 }
