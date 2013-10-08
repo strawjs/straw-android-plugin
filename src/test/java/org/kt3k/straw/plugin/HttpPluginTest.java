@@ -23,7 +23,8 @@ public class HttpPluginTest {
 
 	@Test
 	public void testGetName() {
-		assertEquals("http", new HttpPlugin().getName());
+		HttpPlugin plugin = new org.kt3k.straw.plugin.HttpPlugin();
+		assertEquals("http", plugin.getName());
 	}
 
 	@Test
