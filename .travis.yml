@@ -10,4 +10,5 @@ env:
 
 after_success:
 - gradle cobertura
-- gradle coveralls
+- cat build/reports/cobertura/coverage.xml
+- gradle --info coveralls
