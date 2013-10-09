@@ -5,6 +5,7 @@ import static org.kt3k.straw.plugin.HttpPlugin.*;
 import org.junit.Test;
 import org.junit.Rule;
 import org.kt3k.straw.StrawDrink;
+import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.*;
 
@@ -44,6 +45,8 @@ public class HttpPluginTest {
 						.withHeader("Content-Type", "text/plain")
 						.withBody("This is response text.")));
 
+		ArgumentCaptor<HttpResult> captor = ArgumentCaptor.forClass(HttpResult.class);
+
 		HttpParam httpParam = new HttpParam();
 		httpParam.url = "http://localhost:8089/http/stub";
 
@@ -51,7 +54,35 @@ public class HttpPluginTest {
 		StrawDrink drink = mock(StrawDrink.class);
 		plugin.get(httpParam, drink);
 
-		verify(drink).success(isA(HttpResult.class));
+		verify(drink).success(captor.capture());
+
+		assertEquals("This is response text.", captor.getValue().content);
+	}
+
+	@Test
+	public void testGetMalformedUrl() {
+
+		HttpParam httpParam = new HttpParam();
+		httpParam.url = "zzzZZZ";
+
+		HttpPlugin plugin = new HttpPlugin();
+		StrawDrink drink = mock(StrawDrink.class);
+		plugin.get(httpParam, drink);
+
+		verify(drink).fail(URL_MALFORMED_ERROR, "URL format is wrong: zzzZZZ");
+	}
+
+	@Test
+	public void testGetIOError() {
+
+		HttpParam httpParam = new HttpParam();
+		httpParam.url = "http://localhost:333/";
+
+		HttpPlugin plugin = new HttpPlugin();
+		StrawDrink drink = mock(StrawDrink.class);
+		plugin.get(httpParam, drink);
+
+		verify(drink).fail(CANNOT_READ_ERROR, "input stream cannot open: http://localhost:333/");
 	}
 
 }
