@@ -96,9 +96,11 @@ public class HttpPlugin extends StrawPlugin {
 		drink.success(new HttpResult(content));
 	}
 
+	/*
 	@PluginAction
 	public void post(HttpParam param, StrawDrink drink) {
 	}
+	*/
 
 	private static String inputStreamToString(java.io.InputStream stream) {
 		Scanner scanner = new Scanner(stream).useDelimiter("\\A");
