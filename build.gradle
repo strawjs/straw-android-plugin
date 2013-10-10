@@ -22,7 +22,7 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
     testCompile group: 'org.robolectric', name: 'robolectric', version: '2.1.1'
 
-    testCompile 'com.github.tomakehurst:wiremock:1.18'
+    testCompile 'com.github.tomakehurst:wiremock:1.34'
 }
 
 buildscript {

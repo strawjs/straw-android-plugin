@@ -17,7 +17,7 @@ import com.github.tomakehurst.wiremock.junit.*;
 public class HttpPluginTest {
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8089);
+	public WireMockRule wireMockRule = new WireMockRule(8089, 8443);
 
 	@Test
 	public void testGetName() {
@@ -60,7 +60,28 @@ public class HttpPluginTest {
 	}
 
 	@Test
-	public void testGetMalformedUrl() {
+	public void testGetWithHttps() throws InterruptedException {
+		stubFor(get(urlEqualTo("/https/stub"))
+				.willReturn(aResponse()
+						.withStatus(200)
+						.withHeader("Content-Type", "text/plain")
+						.withBody("This is response text.")));
+
+		ArgumentCaptor<HttpResult> captor = ArgumentCaptor.forClass(HttpResult.class);
+
+		HttpParam httpParam = new HttpParam();
+		httpParam.url = "https://localhost:8443/https/stub";
+
+		HttpPlugin plugin = new HttpPlugin();
+		StrawDrink drink = mock(StrawDrink.class);
+		plugin.get(httpParam, drink);
+
+		verify(drink).success(captor.capture());
+		assertEquals("This is response text.", captor.getValue().content);
+	}
+
+	@Test
+	public void testGetWithMalformedUrl() {
 
 		HttpParam httpParam = new HttpParam();
 		httpParam.url = "zzzZZZ";
@@ -69,11 +90,12 @@ public class HttpPluginTest {
 		StrawDrink drink = mock(StrawDrink.class);
 		plugin.get(httpParam, drink);
 
-		verify(drink).fail(URL_MALFORMED_ERROR, "URL format is wrong: zzzZZZ");
+		verify(drink).fail(URL_MALFORMED_ERROR, "URL format is wrong: zzzZZZ\n" +
+				"java.net.MalformedURLException: no protocol: zzzZZZ");
 	}
 
 	@Test
-	public void testGetIOError() {
+	public void testGetWithIOErrorWhenConnect() {
 
 		HttpParam httpParam = new HttpParam();
 		httpParam.url = "http://localhost:333/";
@@ -82,7 +104,8 @@ public class HttpPluginTest {
 		StrawDrink drink = mock(StrawDrink.class);
 		plugin.get(httpParam, drink);
 
-		verify(drink).fail(CANNOT_READ_ERROR, "input stream cannot open: http://localhost:333/");
+		verify(drink).fail(CANNOT_READ_ERROR, "input stream cannot open: http://localhost:333/\n" +
+				"java.net.ConnectException: Connection refused");
 	}
 
 }

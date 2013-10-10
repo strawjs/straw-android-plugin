@@ -10,8 +10,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.Scanner;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 
 import org.kt3k.straw.StrawDrink;
@@ -25,6 +27,29 @@ public class HttpPlugin extends StrawPlugin {
 	static final String CANNOT_READ_ERROR = "2";
 	static final String SSL_UNAVAILABLE = "3";
 	static final String TIMEOUT = "4";
+
+	static final X509TrustManager TRUST_ALL = new X509TrustManager(){
+
+		public void checkClientTrusted(X509Certificate[] chain,String authType) {
+		}
+
+		public void checkServerTrusted(X509Certificate[] chain, String authType) {
+		}
+
+		public X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
+
+	};
+
+	static final HostnameVerifier NO_VERIFIER = new HostnameVerifier() {
+
+		@Override
+		public boolean verify(String arg0, SSLSession arg1) {
+			return true;
+		}
+
+	};
 
 	@Override
 	public String getName() {
@@ -50,33 +75,32 @@ public class HttpPlugin extends StrawPlugin {
 
 		try {
 			conn = createConnection(param.url);
-		} catch (MalformedURLException e) {
-			drink.fail(URL_MALFORMED_ERROR, "URL format is wrong: " + param.url);
 
-			return;
-		} catch (SocketTimeoutException e) {
-			drink.fail(TIMEOUT, "connection timed out: " + param.url);
+		} catch (MalformedURLException e) {
+			drink.fail(URL_MALFORMED_ERROR, "URL format is wrong: " + param.url + "\n" + e.toString());
 
 			return;
 		} catch (IOException e) {
-			drink.fail(CANNOT_CONNECT_ERROR, "cannot connect to url: " + param.url);
+			drink.fail(CANNOT_CONNECT_ERROR, "cannot connect to url: " + param.url + "\n" + e.toString());
 
 			return;
 		}
 
 		if (param.url.startsWith("https")) {
+
 			try {
 				setSSLContext(conn);
 
 			} catch (NoSuchAlgorithmException e) {
-				drink.fail(SSL_UNAVAILABLE, "SSL connection is unavailable: " + param.url);
+				drink.fail(SSL_UNAVAILABLE, "SSL connection is unavailable: " + param.url + "\n" + e.toString());
 
 				return;
 			} catch (KeyManagementException e) {
-				drink.fail(SSL_UNAVAILABLE, "SSL connection is unavailable: " + param.url);
+				drink.fail(SSL_UNAVAILABLE, "SSL connection is unavailable: " + param.url + "\n" + e.toString());
 
 				return;
 			}
+
 		}
 
 		String content = null;
@@ -84,11 +108,11 @@ public class HttpPlugin extends StrawPlugin {
 		try {
 			content = inputStreamToString(conn.getInputStream());
 		} catch (SocketTimeoutException e) {
-			drink.fail(TIMEOUT, "connection timed out: " + param.url);
+			drink.fail(TIMEOUT, "connection timed out: " + param.url + "\n" + e.toString());
 
 			return;
 		} catch (IOException e) {
-			drink.fail(CANNOT_READ_ERROR, "input stream cannot open: " + param.url);
+			drink.fail(CANNOT_READ_ERROR, "input stream cannot open: " + param.url + "\n" + e.toString());
 
 			return;
 		}
@@ -100,7 +124,7 @@ public class HttpPlugin extends StrawPlugin {
 	@PluginAction
 	public void post(HttpParam param, StrawDrink drink) {
 	}
-	*/
+	 */
 
 	private static String inputStreamToString(java.io.InputStream stream) {
 		Scanner scanner = new Scanner(stream).useDelimiter("\\A");
@@ -117,14 +141,17 @@ public class HttpPlugin extends StrawPlugin {
 	}
 
 	private static void setSSLContext(HttpURLConnection conn) throws NoSuchAlgorithmException, KeyManagementException {
+		setSSLContext((HttpsURLConnection)conn);
+	}
+
+	private static void setSSLContext(HttpsURLConnection conn) throws NoSuchAlgorithmException, KeyManagementException {
+
 		SSLContext ctx = SSLContext.getInstance("TLS");
 
-		ctx.init(null, new X509TrustManager[]{new X509TrustManager(){
-			public void checkClientTrusted(X509Certificate[] chain,String authType) {}
-			public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-			public X509Certificate[] getAcceptedIssuers() { return null; }
-		}}, null);
+		ctx.init(null, new X509TrustManager[]{TRUST_ALL}, null);
 
-		((HttpsURLConnection)conn).setSSLSocketFactory(ctx.getSocketFactory());
+		conn.setSSLSocketFactory(ctx.getSocketFactory());
+
+		conn.setHostnameVerifier(NO_VERIFIER);
 	}
 }
