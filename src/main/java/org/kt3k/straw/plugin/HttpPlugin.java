@@ -59,6 +59,67 @@ public class HttpPlugin extends StrawPlugin {
 	public static class HttpParam {
 		public String url;
 		public String data;
+
+		public Boolean isHttpsRequest() {
+			return this.url != null && this.url.startsWith("https");
+		}
+
+		public HttpConnection createConnection() throws MalformedURLException, IOException {
+			if (this.url == null) {
+				return null;
+			}
+
+			URL url = new URL(this.url);
+
+			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+
+			return new HttpConnection(conn, this);
+
+		}
+	}
+
+	public static class HttpConnection {
+		private HttpURLConnection conn;
+		private HttpParam param;
+
+		public HttpConnection(HttpURLConnection conn, HttpParam param) {
+			this.param = param;
+			this.conn = conn;
+		}
+
+		public Boolean isHttpsConnection() {
+			return this.param.isHttpsRequest();
+		}
+
+		public String getContents() throws IOException {
+			return inputStreamToString(this.conn.getInputStream());
+		}
+
+		private static String inputStreamToString(java.io.InputStream stream) {
+			Scanner scanner = new Scanner(stream).useDelimiter("\\A");
+
+			return scanner.hasNext() ? scanner.next() : "";
+		}
+
+		public void setSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
+			setSSLContext(this.conn);
+		}
+
+		private static void setSSLContext(HttpURLConnection conn) throws NoSuchAlgorithmException, KeyManagementException {
+			setSSLContext((HttpsURLConnection)conn);
+		}
+
+		private static void setSSLContext(HttpsURLConnection conn) throws NoSuchAlgorithmException, KeyManagementException {
+
+			SSLContext ctx = SSLContext.getInstance("TLS");
+
+			ctx.init(null, new X509TrustManager[]{TRUST_ALL}, null);
+
+			conn.setSSLSocketFactory(ctx.getSocketFactory());
+
+			conn.setHostnameVerifier(NO_VERIFIER);
+		}
+
 	}
 
 	public static class HttpResult {
@@ -71,10 +132,10 @@ public class HttpPlugin extends StrawPlugin {
 
 	@PluginAction
 	public void get(HttpParam param, StrawDrink drink) {
-		HttpURLConnection conn;
+		HttpConnection conn;
 
 		try {
-			conn = createConnection(param.url);
+			conn = param.createConnection();
 
 		} catch (MalformedURLException e) {
 			drink.fail(URL_MALFORMED_ERROR, "URL format is wrong: " + param.url + "\n" + e.toString());
@@ -86,10 +147,10 @@ public class HttpPlugin extends StrawPlugin {
 			return;
 		}
 
-		if (param.url.startsWith("https")) {
+		if (conn.isHttpsConnection()) {
 
 			try {
-				setSSLContext(conn);
+				conn.setSSLContext();
 
 			} catch (NoSuchAlgorithmException e) {
 				drink.fail(SSL_UNAVAILABLE, "SSL connection is unavailable: " + param.url + "\n" + e.toString());
@@ -103,10 +164,9 @@ public class HttpPlugin extends StrawPlugin {
 
 		}
 
-		String content = null;
-
 		try {
-			content = inputStreamToString(conn.getInputStream());
+			drink.success(new HttpResult(conn.getContents()));
+
 		} catch (SocketTimeoutException e) {
 			drink.fail(TIMEOUT, "connection timed out: " + param.url + "\n" + e.toString());
 
@@ -117,7 +177,6 @@ public class HttpPlugin extends StrawPlugin {
 			return;
 		}
 
-		drink.success(new HttpResult(content));
 	}
 
 	/*
@@ -126,32 +185,4 @@ public class HttpPlugin extends StrawPlugin {
 	}
 	 */
 
-	private static String inputStreamToString(java.io.InputStream stream) {
-		Scanner scanner = new Scanner(stream).useDelimiter("\\A");
-
-		return scanner.hasNext() ? scanner.next() : "";
-	}
-
-	private static HttpURLConnection createConnection(String spec) throws MalformedURLException, IOException {
-		URL url = new URL(spec);
-
-		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-
-		return conn;
-	}
-
-	private static void setSSLContext(HttpURLConnection conn) throws NoSuchAlgorithmException, KeyManagementException {
-		setSSLContext((HttpsURLConnection)conn);
-	}
-
-	private static void setSSLContext(HttpsURLConnection conn) throws NoSuchAlgorithmException, KeyManagementException {
-
-		SSLContext ctx = SSLContext.getInstance("TLS");
-
-		ctx.init(null, new X509TrustManager[]{TRUST_ALL}, null);
-
-		conn.setSSLSocketFactory(ctx.getSocketFactory());
-
-		conn.setHostnameVerifier(NO_VERIFIER);
-	}
 }
