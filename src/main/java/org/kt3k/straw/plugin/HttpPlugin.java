@@ -59,6 +59,8 @@ public class HttpPlugin extends StrawPlugin {
 	public static class HttpParam {
 		public String url;
 		public String data;
+		public String charset;
+		public Integer timeout;
 
 		public Boolean isHttpsRequest() {
 			return this.url != null && this.url.startsWith("https");
@@ -66,7 +68,7 @@ public class HttpPlugin extends StrawPlugin {
 
 		public HttpConnection createConnection() throws MalformedURLException, IOException {
 			if (this.url == null) {
-				return null;
+				throw new IOException("url is null");
 			}
 
 			URL url = new URL(this.url);
@@ -92,10 +94,10 @@ public class HttpPlugin extends StrawPlugin {
 		}
 
 		public String getContents() throws IOException {
-			return inputStreamToString(this.conn.getInputStream());
+			return this.inputStreamToString(this.conn.getInputStream());
 		}
 
-		private static String inputStreamToString(java.io.InputStream stream) {
+		private String inputStreamToString(java.io.InputStream stream) {
 			Scanner scanner = new Scanner(stream).useDelimiter("\\A");
 
 			return scanner.hasNext() ? scanner.next() : "";
