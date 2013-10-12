@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -90,7 +91,23 @@ public class HttpPlugin extends StrawPlugin {
 		}
 
 		public Integer getTimeout() {
+
+			if (this.timeout == null) {
+				// timeout = 0 means no timeout
+				return 0;
+			}
+
 			return this.timeout;
+		}
+
+		public String getCharset() {
+
+			if (this.charset == null) {
+				// if charset is not specified, then jvm's default charset will be used
+				return Charset.defaultCharset().name();
+			}
+
+			return this.charset;
 		}
 	}
 
@@ -115,11 +132,11 @@ public class HttpPlugin extends StrawPlugin {
 		}
 
 		public String getContents() throws IOException {
-			return this.inputStreamToString(this.conn.getInputStream());
+			return this.inputStreamToString(this.conn.getInputStream(), this.param.getCharset());
 		}
 
-		private String inputStreamToString(java.io.InputStream stream) {
-			Scanner scanner = new Scanner(stream).useDelimiter("\\A");
+		private String inputStreamToString(java.io.InputStream stream, String charset) {
+			Scanner scanner = new Scanner(stream, charset).useDelimiter("\\A");
 
 			return scanner.hasNext() ? scanner.next() : "";
 		}
