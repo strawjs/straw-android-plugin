@@ -4,6 +4,7 @@ import static org.kt3k.straw.plugin.HttpPlugin.*;
 
 import org.junit.Test;
 import org.junit.Rule;
+import org.junit.Before;
 import org.kt3k.straw.StrawDrink;
 import org.mockito.ArgumentCaptor;
 
@@ -11,13 +12,28 @@ import static org.junit.Assert.*;
 
 import static org.mockito.Mockito.*;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import com.github.tomakehurst.wiremock.junit.*;
 
 public class HttpPluginTest {
 
+	HttpParam param;
+	HttpPlugin plugin;
+	StrawDrink drink;
+
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(8089, 8443);
+
+
+	@Before
+	public void setUp() {
+		this.param = new HttpParam();
+		this.plugin = new HttpPlugin();
+		this.drink = mock(StrawDrink.class);
+	}
 
 
 	@Test
@@ -142,6 +158,63 @@ public class HttpPluginTest {
 
 		verify(drink).fail(CANNOT_CONNECT_ERROR, "cannot connect to url: null\n" +
 				"java.io.IOException: url is null");
+	}
+
+
+	@Test
+	public void testGet404() {
+
+		stubFor(get(urlEqualTo("/404")).willReturn(aResponse().withStatus(404)));
+
+		this.param.url = "http://localhost:8089/404";
+
+		this.plugin.get(this.param, this.drink);
+
+		verify(this.drink).fail(CANNOT_READ_ERROR, "input stream cannot open: http://localhost:8089/404\n" +
+				"java.io.FileNotFoundException: http://localhost:8089/404");
+
+	}
+
+	@Test
+	public void testGetTimeout() {
+
+		stubFor(get(urlEqualTo("/http/stub")).willReturn(aResponse().withStatus(200).withFixedDelay(2000)));
+
+		this.param.url = "http://localhost:8089/http/stub";
+		this.param.timeout = 1000;
+
+		this.plugin.get(this.param, this.drink);
+
+		verify(this.drink).fail(TIMEOUT, "connection timed out: http://localhost:8089/http/stub\n" +
+				"java.net.SocketTimeoutException: Read timed out");
+
+	}
+
+	@Test
+	public void testGetNoTimeout() {
+
+		stubFor(get(urlEqualTo("/http/stub")).willReturn(aResponse().withStatus(200).withFixedDelay(2000)));
+
+		this.param.url = "http://localhost:8089/http/stub";
+
+		this.plugin.get(this.param, this.drink);
+
+		verify(this.drink).success(isA(HttpResult.class));
+
+	}
+
+	@Test
+	public void testGetInTimeout() {
+
+		stubFor(get(urlEqualTo("/http/stub")).willReturn(aResponse().withStatus(200).withFixedDelay(2000)));
+
+		this.param.url = "http://localhost:8089/http/stub";
+		this.param.timeout = 3000;
+
+		this.plugin.get(this.param, this.drink);
+
+		verify(this.drink).success(isA(HttpResult.class));
+
 	}
 
 }
