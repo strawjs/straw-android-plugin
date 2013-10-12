@@ -20,6 +20,7 @@ public class UIPlugin extends org.kt3k.straw.StrawPlugin {
 	/**
 	 * show toast
 	 * @param param
+	 * @subparam param.text message to show on toast
 	 * @param drink
 	 */
 	@RunOnUiThread
@@ -31,6 +32,7 @@ public class UIPlugin extends org.kt3k.straw.StrawPlugin {
 	/**
 	 * show toast long
 	 * @param param
+	 * @subparam param.text message to show on toast
 	 * @param drink
 	 */
 	@RunOnUiThread
