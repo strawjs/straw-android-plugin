@@ -28,7 +28,10 @@ public class HttpPlugin extends StrawPlugin {
 	static final String SSL_UNAVAILABLE = "3";
 	static final String TIMEOUT = "4";
 
-	static final X509TrustManager TRUST_ALL = new X509TrustManager(){
+	/**
+	 * TrustManager checks nothing and trust everything
+	 */
+	static final X509TrustManager TRUST_ALL = new X509TrustManager() {
 
 		public void checkClientTrusted(X509Certificate[] chain,String authType) {
 		}
@@ -42,6 +45,9 @@ public class HttpPlugin extends StrawPlugin {
 
 	};
 
+	/**
+	 * HostnameVerifier verify every host name
+	 */
 	static final HostnameVerifier NO_VERIFIER = new HostnameVerifier() {
 
 		@Override
@@ -56,7 +62,11 @@ public class HttpPlugin extends StrawPlugin {
 		return "http";
 	}
 
+	/**
+	 * Parameter class for `get` and `post` actions
+	 */
 	public static class HttpParam {
+
 		public String url;
 		public String data;
 		public String charset;
@@ -78,15 +88,26 @@ public class HttpPlugin extends StrawPlugin {
 			return new HttpConnection(conn, this);
 
 		}
+
+		public Integer getTimeout() {
+			return this.timeout;
+		}
 	}
 
+	/**
+	 * Wrapper class for Http(s)URLConnection class
+	 */
 	public static class HttpConnection {
+
 		private HttpURLConnection conn;
+
 		private HttpParam param;
 
 		public HttpConnection(HttpURLConnection conn, HttpParam param) {
 			this.param = param;
 			this.conn = conn;
+
+			this.setTimeout(param.getTimeout());
 		}
 
 		public Boolean isHttpsConnection() {
@@ -101,6 +122,17 @@ public class HttpPlugin extends StrawPlugin {
 			Scanner scanner = new Scanner(stream).useDelimiter("\\A");
 
 			return scanner.hasNext() ? scanner.next() : "";
+		}
+
+		private void setTimeout(Integer timeout) {
+
+			if (timeout == null) {
+				return;
+			}
+
+			this.conn.setConnectTimeout(timeout);
+			this.conn.setReadTimeout(timeout);
+
 		}
 
 		public void setSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
@@ -120,9 +152,11 @@ public class HttpPlugin extends StrawPlugin {
 			conn.setSSLSocketFactory(ctx.getSocketFactory());
 
 			conn.setHostnameVerifier(NO_VERIFIER);
+
 		}
 
 	}
+
 
 	public static class HttpResult {
 		public String content;
@@ -132,6 +166,15 @@ public class HttpPlugin extends StrawPlugin {
 		}
 	}
 
+
+	/**
+	 * http get param.url
+	 * @param param
+	 * @subparam param.url request url
+	 * @subparam param.timeout request timeout
+	 * @subparam param.charset decoding charset for response body
+	 * @param drink
+	 */
 	@PluginAction
 	public void get(HttpParam param, StrawDrink drink) {
 		HttpConnection conn;
@@ -143,6 +186,7 @@ public class HttpPlugin extends StrawPlugin {
 			drink.fail(URL_MALFORMED_ERROR, "URL format is wrong: " + param.url + "\n" + e.toString());
 
 			return;
+
 		} catch (IOException e) {
 			drink.fail(CANNOT_CONNECT_ERROR, "cannot connect to url: " + param.url + "\n" + e.toString());
 
@@ -158,6 +202,7 @@ public class HttpPlugin extends StrawPlugin {
 				drink.fail(SSL_UNAVAILABLE, "SSL connection is unavailable: " + param.url + "\n" + e.toString());
 
 				return;
+
 			} catch (KeyManagementException e) {
 				drink.fail(SSL_UNAVAILABLE, "SSL connection is unavailable: " + param.url + "\n" + e.toString());
 
