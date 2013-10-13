@@ -2,6 +2,12 @@ package org.kt3k.straw.plugin;
 
 import static org.kt3k.straw.plugin.HttpPlugin.*;
 
+import java.io.UnsupportedEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLSession;
+
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.Before;
@@ -23,6 +29,7 @@ public class HttpPluginTest {
 	HttpParam param;
 	HttpPlugin plugin;
 	StrawDrink drink;
+	ArgumentCaptor<HttpResult> captor;
 
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(8089, 8443);
@@ -33,6 +40,7 @@ public class HttpPluginTest {
 		this.param = new HttpParam();
 		this.plugin = new HttpPlugin();
 		this.drink = mock(StrawDrink.class);
+		this.captor = ArgumentCaptor.forClass(HttpResult.class);
 	}
 
 
@@ -121,6 +129,7 @@ public class HttpPluginTest {
 				"java.net.ConnectException: Connection refused");
 	}
 
+
 	@Test
 	public void testGetWithUrlNull() {
 
@@ -147,6 +156,7 @@ public class HttpPluginTest {
 
 	}
 
+
 	@Test
 	public void testGetTimeout() {
 
@@ -162,6 +172,7 @@ public class HttpPluginTest {
 
 	}
 
+
 	@Test
 	public void testGetNoTimeout() {
 
@@ -175,6 +186,7 @@ public class HttpPluginTest {
 
 	}
 
+
 	@Test
 	public void testGetInTimeout() {
 
@@ -186,6 +198,42 @@ public class HttpPluginTest {
 		this.plugin.get(this.param, this.drink);
 
 		verify(this.drink).success(isA(HttpResult.class));
+
+	}
+
+
+	@Test
+	public void testGetWithCharset() throws UnsupportedEncodingException {
+
+		stubFor(get(urlEqualTo("/http/stub")).willReturn(aResponse().withStatus(200).withBody("あい".getBytes("UTF-8"))));
+
+		this.param.url = "http://localhost:8089/http/stub";
+		this.param.charset = "utf-8";
+
+		this.plugin.get(this.param, this.drink);
+
+		verify(this.drink).success(this.captor.capture());
+
+		assertEquals("あい", captor.getValue().content);
+
+	}
+
+
+	@Test
+	public void testTrustManger() throws CertificateException {
+
+		// test these things exist and run with no exception
+		TRUST_ALL.checkClientTrusted(new X509Certificate[]{}, "");
+		TRUST_ALL.checkServerTrusted(new X509Certificate[]{}, "");
+		TRUST_ALL.getAcceptedIssuers();
+
+	}
+
+
+	@Test
+	public void testHostnameVerifier() {
+
+		NO_VERIFIER.verify("", mock(SSLSession.class));
 
 	}
 

@@ -91,12 +91,6 @@ public class HttpPlugin extends StrawPlugin {
 		}
 
 		public Integer getTimeout() {
-
-			if (this.timeout == null) {
-				// timeout = 0 means no timeout
-				return 0;
-			}
-
 			return this.timeout;
 		}
 
