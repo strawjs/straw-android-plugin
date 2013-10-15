@@ -35,9 +35,6 @@ public class SharedPreferencesPlugin extends StrawPlugin {
 
 		public String value;
 
-		public SharedPreferencesResult() {
-		}
-
 		public SharedPreferencesResult(String value) {
 			this.value = value;
 		}
