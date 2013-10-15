@@ -2,3 +2,34 @@ straw-android-plugin [![Build Status](https://travis-ci.org/kt3k/straw-android-p
 ====================
 
 Actual plugin implementations for [straw-android](https://github.com/kt3k/straw-android).
+
+
+HTTP plugin
+-----------
+
+- get
+
+UI plugin
+---------
+
+- toast
+- toastLong
+
+Log plugin
+----------
+
+- verbose
+- debug
+- info
+- warn
+- error
+
+SharedPreferences plugin
+------------------------
+
+- get
+- set
+- has
+- clear
+- remove
+- dump
