@@ -37,11 +37,11 @@ public class LogPluginTest {
 	@Test
 	public void testLogPram() {
 
-		assertEquals(DEFAULT_SERVICE_NAME, param.getServiceName());
+		assertEquals(DEFAULT_SERVICE_NAME, param.getLabel());
 
-		param.serviceName = "abc";
+		param.label = "abc";
 
-		assertEquals("abc", param.getServiceName());
+		assertEquals("abc", param.getLabel());
 
 	}
 

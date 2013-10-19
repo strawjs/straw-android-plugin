@@ -16,36 +16,36 @@ public class LogPlugin extends StrawPlugin {
 	}
 
 	static class LogParam {
-		public String serviceName;
+		public String label;
 		public String message;
 
-		public String getServiceName() {
-			return this.serviceName != null ? this.serviceName : DEFAULT_SERVICE_NAME;
+		public String getLabel() {
+			return this.label != null ? this.label : DEFAULT_SERVICE_NAME;
 		}
 	}
 
 	@PluginAction
 	public void error(LogParam param, StrawDrink drink) {
-		Log.e(param.getServiceName(), param.message);
+		Log.e(param.getLabel(), param.message);
 	}
 
 	@PluginAction
 	public void warn(LogParam param, StrawDrink drink) {
-		Log.w(param.getServiceName(), param.message);
+		Log.w(param.getLabel(), param.message);
 	}
 
 	@PluginAction
 	public void info(LogParam param, StrawDrink drink) {
-		Log.i(param.getServiceName(), param.message);
+		Log.i(param.getLabel(), param.message);
 	}
 
 	@PluginAction
 	public void debug(LogParam param, StrawDrink drink) {
-		Log.d(param.getServiceName(), param.message);
+		Log.d(param.getLabel(), param.message);
 	}
 
 	@PluginAction
 	public void verbose(LogParam param, StrawDrink drink) {
-		Log.v(param.getServiceName(), param.message);
+		Log.v(param.getLabel(), param.message);
 	}
 }
