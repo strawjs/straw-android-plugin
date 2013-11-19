@@ -236,5 +236,17 @@ public class HttpPluginTest {
 		NO_VERIFIER.verify("", mock(SSLSession.class));
 
 	}
+	
+	@Test
+	public void testNoKeepAlive() {
+		
+		stubFor(get(urlEqualTo("/http/stub")).willReturn(aResponse().withStatus(200)));
+
+		this.param.url = "http://localhost:8089/http/stub";
+
+		this.plugin.get(this.param, this.drink);
+		
+		assertEquals("false", System.getProperty("http.keepAlive"));
+	}
 
 }
