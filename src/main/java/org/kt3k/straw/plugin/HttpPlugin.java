@@ -3,6 +3,7 @@ package org.kt3k.straw.plugin;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -84,7 +85,16 @@ public class HttpPlugin extends StrawPlugin {
 
 			URL url = new URL(this.url);
 
-			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+			// no keepAlive
+			System.setProperty("http.keepAlive", "false");
+
+			HttpURLConnection conn = (HttpURLConnection)url.openConnection(Proxy.NO_PROXY);
+
+			// use no cache
+			conn.setRequestProperty("Cache-Control", "no-cache");
+
+			// use no cache
+			conn.setUseCaches(false);
 
 			return new HttpConnection(conn, this);
 
