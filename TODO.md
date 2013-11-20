@@ -1,14 +1,12 @@
 TODO
 ----
 
-- locale plugin
-  - getLanguage() => "en", "ja"
-
-- browser plugin
-  - open(url) => browser open with url
-
 DONE
 ----
+- locale plugin - done
+  - getLanguage() => "en", "ja"
+- browser plugin - done
+  - open(url) => browser open with url
 - cover LogPlugin - done
 - cover HttpPlugin - done
   - mock timeout response
