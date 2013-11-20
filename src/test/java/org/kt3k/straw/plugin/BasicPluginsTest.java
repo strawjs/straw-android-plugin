@@ -25,6 +25,7 @@ public class BasicPluginsTest {
 			"org.kt3k.straw.plugin.SharedPreferencesPlugin",
 			"org.kt3k.straw.plugin.UIPlugin",
 			"org.kt3k.straw.plugin.LocalePlugin",
+			"org.kt3k.straw.plugin.BrowserPlugin",
 		}, BasicPlugins.names);
 	}
 	
@@ -38,6 +39,7 @@ public class BasicPluginsTest {
 			SharedPreferencesPlugin.class,
 			UIPlugin.class,
 			LocalePlugin.class,
+			BrowserPlugin.class,
 		}, BasicPlugins.classes);
 	}
 
