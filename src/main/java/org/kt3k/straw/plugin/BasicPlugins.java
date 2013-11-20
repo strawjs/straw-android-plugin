@@ -9,6 +9,7 @@ public class BasicPlugins {
 		"org.kt3k.straw.plugin.OptionsMenuPlugin",
 		"org.kt3k.straw.plugin.SharedPreferencesPlugin",
 		"org.kt3k.straw.plugin.UIPlugin",
+		"org.kt3k.straw.plugin.LocalePlugin",
 	};
 
 	public static Class<?>[] classes = new Class<?>[]{
