@@ -1,14 +1,19 @@
 TODO
 ----
 
-- introduce PowerMock
-- cover SharedPreferencesPlugin
-- cover LogPlugin
-- cover HttpPlugin
-  - mock timeout response
+- locale plugin
+  - getLanguage() => "en", "ja"
+
+- browser plugin
+  - open(url) => browser open with url
 
 DONE
 ----
-- HttpPlugin
+- cover LogPlugin - done
+- cover HttpPlugin - done
+  - mock timeout response
+- cover SharedPreferencesPlugin - done
+- introduce PowerMock - no
+- HttpPlugin - done
   - timeout feature
   - charset feature
