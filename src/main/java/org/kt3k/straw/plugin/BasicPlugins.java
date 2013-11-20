@@ -19,6 +19,7 @@ public class BasicPlugins {
 		OptionsMenuPlugin.class,
 		SharedPreferencesPlugin.class,
 		UIPlugin.class,
+		LocalePlugin.class,
 	};
 
 }

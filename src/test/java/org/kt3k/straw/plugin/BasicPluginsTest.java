@@ -27,6 +27,19 @@ public class BasicPluginsTest {
 			"org.kt3k.straw.plugin.LocalePlugin",
 		}, BasicPlugins.names);
 	}
+	
+	@Test
+	public void testClasses() {
+		assertArrayEquals(new Class[]{
+			ActivityPlugin.class,
+			HttpPlugin.class,
+			LogPlugin.class,
+			OptionsMenuPlugin.class,
+			SharedPreferencesPlugin.class,
+			UIPlugin.class,
+			LocalePlugin.class,
+		}, BasicPlugins.classes);
+	}
 
 	@Test
 	public void testBasicPluginLoading() {
