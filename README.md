@@ -4,18 +4,18 @@ straw-android-plugin v0.4.0 [![Build Status](https://travis-ci.org/strawjs/straw
 Basic & useful plugins for [straw-android](https://github.com/strawjs/straw-android).
 
 
-HTTP plugin
+HTTP Plugin
 -----------
 
 - get
 
-UI plugin
+UI Plugin
 ---------
 
 - toast
 - toastLong
 
-Log plugin
+Log Plugin
 ----------
 
 - verbose
@@ -24,7 +24,7 @@ Log plugin
 - warn
 - error
 
-SharedPreferences plugin
+SharedPreferences Plugin
 ------------------------
 
 - get
@@ -33,3 +33,20 @@ SharedPreferences plugin
 - clear
 - remove
 - dump
+
+Browser Plugin
+--------------
+
+- open
+  - @param url
+
+Locale Plugin
+-------------
+
+- getLanguage
+
+
+VERSION HISTORY
+---------------
+
+- 2013-11-20 v0.4.0 Added locale plugin / Added browser plugin
