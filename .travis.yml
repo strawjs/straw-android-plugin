@@ -1,4 +1,4 @@
-# .travis.yml of straw-android-plugin
+# .travis.yml for straw-android-plugin
 
 language: java
 
@@ -10,5 +10,4 @@ env:
 
 after_success:
 - gradle cobertura
-- cat build/reports/cobertura/coverage.xml
 - gradle --info coveralls
