@@ -1,7 +1,7 @@
 package org.kt3k.straw.plugin;
 
-import org.kt3k.straw.PluginAction;
-import org.kt3k.straw.RunOnUiThread;
+import org.kt3k.straw.annotation.PluginAction;
+import org.kt3k.straw.annotation.RunOnUiThread;
 import org.kt3k.straw.StrawDrink;
 
 import android.widget.Toast;

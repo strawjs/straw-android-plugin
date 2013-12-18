@@ -1,6 +1,6 @@
 package org.kt3k.straw.plugin;
 
-import org.kt3k.straw.PluginAction;
+import org.kt3k.straw.annotation.PluginAction;
 import org.kt3k.straw.StrawDrink;
 import org.kt3k.straw.StrawPlugin;
 

@@ -20,7 +20,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.kt3k.straw.StrawDrink;
 import org.kt3k.straw.StrawPlugin;
-import org.kt3k.straw.PluginAction;
+import org.kt3k.straw.annotation.PluginAction;
 
 public class HttpPlugin extends StrawPlugin {
 
