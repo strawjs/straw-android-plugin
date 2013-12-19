@@ -3,8 +3,6 @@ package org.kt3k.straw.plugin;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Locale;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kt3k.straw.StrawDrink;
