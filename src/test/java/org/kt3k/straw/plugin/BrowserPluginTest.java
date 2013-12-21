@@ -44,6 +44,28 @@ public class BrowserPluginTest {
 		verify(drink).success();
 	}
 
+	@Test
+	public void testOpenSuccessWithHttps() {
+		StrawDrink drink = mock(StrawDrink.class);
+		Activity activity = mock(Activity.class);
+
+		BrowserPlugin plugin = new BrowserPlugin();
+		plugin.setContext(activity);
+
+		SingleStringParam param = new SingleStringParam();
+
+		// proper url parameter
+		param.value = "https://google.com/";
+
+		plugin.open(param, drink);
+
+		// startActivity is called
+		verify(activity).startActivity(eq(new Intent(Intent.ACTION_VIEW, Uri.parse(param.value))));
+
+		// success() is called
+		verify(drink).success();
+	}
+
 
 	@Test
 	public void testOpenFail() {
