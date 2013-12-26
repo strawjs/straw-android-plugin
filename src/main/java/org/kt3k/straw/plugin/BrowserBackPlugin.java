@@ -18,6 +18,8 @@ public class BrowserBackPlugin extends StrawPlugin {
 		// if can go back then go back
 		if (this.webView.canGoBack()) {
 			this.webView.goBack();
+		} else {
+			this.activity.finish();
 		}
 
 	}

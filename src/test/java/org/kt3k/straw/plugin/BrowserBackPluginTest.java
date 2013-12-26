@@ -6,6 +6,7 @@ import org.kt3k.straw.StrawPlugin;
 
 import static org.mockito.Mockito.*;
 
+import android.app.Activity;
 import android.webkit.WebView;
 
 import static org.junit.Assert.*;
@@ -30,6 +31,11 @@ public class BrowserBackPluginTest {
 	public void testOnBackPressedWhenCanGoBack() {
 		BrowserBackPlugin plugin = new BrowserBackPlugin();
 
+		// mock up activity
+		Activity activity = mock(Activity.class);
+
+		plugin.setContext(activity);
+
 		WebView webView = mock(WebView.class);
 
 		when(webView.canGoBack()).thenReturn(true);
@@ -38,13 +44,21 @@ public class BrowserBackPluginTest {
 
 		plugin.onBackPressed(new StrawEvent(StrawPlugin.EventType.BACK_PRESSED));
 
+		// verify browser back
 		verify(webView).goBack();
+
+		verify(activity, never()).finish();
 	}
 
 
 	@Test
 	public void testOnBackPressedWhenCannotGoBack() {
 		BrowserBackPlugin plugin = new BrowserBackPlugin();
+
+		// mock up activity
+		Activity activity = mock(Activity.class);
+
+		plugin.setContext(activity);
 
 		WebView webView = mock(WebView.class);
 
@@ -55,6 +69,9 @@ public class BrowserBackPluginTest {
 		plugin.onBackPressed(new StrawEvent(StrawPlugin.EventType.BACK_PRESSED));
 
 		verify(webView, never()).goBack();
+
+		// verify activity finish
+		verify(activity).finish();
 	}
 
 }
