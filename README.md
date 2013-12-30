@@ -49,4 +49,6 @@ Locale Plugin
 VERSION HISTORY
 ---------------
 
+- 2013-12-30 v0.6.5 Changed browser back behaviour of no history case
+- 2013-12-20 v0.6.0 Added browser back plugin
 - 2013-11-20 v0.4.0 Added locale plugin / Added browser plugin
