@@ -1,10 +1,9 @@
 TODO
 ----
 
-- BackButton plugin
-
 DONE
 ----
+- BackButton plugin - done
 - locale plugin - done
   - getLanguage() => "en", "ja"
 - browser plugin - done
