@@ -9,7 +9,7 @@ import android.net.Uri;
 
 public class BrowserPlugin extends StrawPlugin {
 
-	final static String NOT_URL = "12001";
+	static final String NOT_URL = "12001";
 
 	@Override
 	public String getName() {
