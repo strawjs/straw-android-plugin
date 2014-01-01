@@ -53,6 +53,7 @@ open any uri which Android can understand
 VERSION HISTORY
 ---------------
 
+- 2013-01-01 v0.7.1 Add uri plugin to basic plugin bundle
 - 2013-12-31 v0.7.0 Add uri plugin
 - 2013-12-30 v0.6.5 Changed browser back behaviour of no history case
 - 2013-12-20 v0.6.0 Added browser back plugin
