@@ -12,6 +12,7 @@ public class BasicPlugins {
 		"org.kt3k.straw.plugin.LocalePlugin",
 		"org.kt3k.straw.plugin.BrowserPlugin",
 		"org.kt3k.straw.plugin.BrowserBackPlugin",
+		"org.kt3k.straw.plugin.UriPlugin",
 	};
 
 	public static Class<?>[] classes = new Class<?>[]{
@@ -24,6 +25,7 @@ public class BasicPlugins {
 		LocalePlugin.class,
 		BrowserPlugin.class,
 		BrowserBackPlugin.class,
+		UriPlugin.class,
 	};
 
 }

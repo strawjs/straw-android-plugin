@@ -27,6 +27,7 @@ public class BasicPluginsTest {
 			"org.kt3k.straw.plugin.LocalePlugin",
 			"org.kt3k.straw.plugin.BrowserPlugin",
 			"org.kt3k.straw.plugin.BrowserBackPlugin",
+			"org.kt3k.straw.plugin.UriPlugin",
 		}, BasicPlugins.names);
 	}
 	
@@ -42,6 +43,7 @@ public class BasicPluginsTest {
 			LocalePlugin.class,
 			BrowserPlugin.class,
 			BrowserBackPlugin.class,
+			UriPlugin.class,
 		}, BasicPlugins.classes);
 	}
 
