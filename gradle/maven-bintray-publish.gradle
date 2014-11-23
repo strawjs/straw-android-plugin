@@ -1,0 +1,137 @@
+// script version = 1.0.0
+
+apply plugin: 'signing'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+def getRepoURL() {
+    return project.hasProperty('sonatype.url') ? project['sonatype.url'] : 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+
+artifacts {
+    archives jar 
+
+    archives javadocJar
+    archives sourcesJar
+}
+
+
+// sign archives if signatory exists
+if (signing.signatory) {
+
+    signing {
+        sign configurations.archives
+    }
+
+}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            // sign pom if signatory exists
+            if (signing.signatory) {
+                beforeDeployment {
+                    signing.signPom(it)
+                }
+            }
+
+            repository(url: getRepoURL()) {
+
+                authentication userName: project['sonatype.username'], password: project['sonatype.password']
+            }
+
+            pom.project {
+
+                name project['pom.name']
+                description project['pom.description']
+                url project['pom.url']
+
+                scm {
+                    url project['pom.scm.url']
+                    connection project['pom.scm.connection']
+                    developerConnection project['pom.scm.developer.connection']
+                }
+
+                licenses {
+                    license {
+                        name project['pom.license.name']
+                        url project['pom.license.url']
+                        distribution project['pom.license.distribution']
+                    }
+                }
+
+                developers {
+                    developer {
+                        id project['pom.developer.id']
+                        name project['pom.developer.name']
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+def pomConfig = {
+    licenses {
+        license {
+            name project['pom.license.name']
+            url project['pom.license.url']
+            distribution project['pom.license.distribution']
+        }
+    }
+
+    developers {
+        developer {
+            id project['pom.developer.id']
+            name project['pom.developer.name']
+        }
+    }
+}
+
+
+publishing {
+    publications {
+        my(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode 'name', project['pom.name']
+                root.appendNode 'description', project['pom.description']
+                root.appendNode 'url', project['pom.url']
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+bintray {
+    user = project['bintray.username']
+    key = project['bintray.apiKey']
+
+    publications = ['my']
+
+    pkg {
+        repo = project['bintray.repo']
+        name = project['bintray.name']
+        licenses = [project['pom.license.name']]
+    }
+}

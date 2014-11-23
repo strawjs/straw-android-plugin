@@ -3,6 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'cobertura'
 apply plugin: 'coveralls'
+apply from: 'gradle/maven-bintray-publish.gradle'
 
 
 repositories {
@@ -23,22 +24,14 @@ buildscript {
     repositories {
 
         mavenCentral()
+        jcenter()
 
     }
 
     dependencies {
         classpath 'net.saliman:gradle-cobertura-plugin:2.0.0'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:0.2.1'
-    }
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            if (project.hasProperty('deployPath')) {
-                repository url: project.deployPath
-            }
-        }
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
     }
 }
 
