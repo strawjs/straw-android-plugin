@@ -1,4 +1,4 @@
-# straw-android-plugin v0.7.1
+# straw-android-plugin v0.7.2
 
 [![Build Status](https://travis-ci.org/strawjs/straw-android-plugin.png?branch=master)](https://travis-ci.org/strawjs/straw-android-plugin) [![Coverage Status](https://coveralls.io/repos/strawjs/straw-android-plugin/badge.png?branch=master)](https://coveralls.io/r/strawjs/straw-android-plugin?branch=master)
 
