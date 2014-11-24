@@ -1,8 +1,12 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
-apply plugin: 'cobertura'
-apply plugin: 'coveralls'
+plugins {
+    id 'java'
+    id 'maven'
+    id 'eclipse'
+    id 'net.saliman.cobertura' version '2.2.5'
+    id 'com.github.kt3k.coveralls' version '2.0.1'
+    id 'com.jfrog.bintray' version '0.5'
+}
+
 apply from: 'gradle/maven-bintray-publish.gradle'
 
 
@@ -18,21 +22,6 @@ dependencies {
     testCompile group: 'org.robolectric', name: 'robolectric', version: '2.1.1'
 
     testCompile 'com.github.tomakehurst:wiremock:1.34'
-}
-
-buildscript {
-    repositories {
-
-        mavenCentral()
-        jcenter()
-
-    }
-
-    dependencies {
-        classpath 'net.saliman:gradle-cobertura-plugin:2.0.0'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:0.2.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
-    }
 }
 
 cobertura.coverageFormats = ['html', 'xml']
